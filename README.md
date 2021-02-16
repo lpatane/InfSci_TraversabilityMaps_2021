@@ -33,7 +33,6 @@ Guidelines to properly use the scripts:
 4) The robot in CoppeliaSim will follow the imposed path.
 
 Videos associated to simulations described on the above mentioned manuscript
-
 1)The videos related to terrain 1 (simulations in Fig. 13) are in .\Videos\terrain1
 2)The videos related to terrain 2 (simulations in Fig. 17)) are in .\Videos\terrain2\ML
 3)The videos related to terrain 2 (simulations in Fig. 18)) are in .\Videos\terrain2\MR
