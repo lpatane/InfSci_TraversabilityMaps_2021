@@ -1,0 +1,30 @@
+close all 
+clear all
+clc 
+
+%CARICAMENTO MAPPA ORIGINALE
+n_downsaple		= 5;
+clearence       = 1;
+
+%[T_intera, P]	= geotiffread('Terreno1.tif');
+%T_taglia    = (T_intera(21:360,29:273));
+
+load('terreno2');
+T_intera=terreno2;
+T_intera=im2single(T_intera);
+load ('Rugosita_terreno2.mat');
+
+% [Rugosita]=Rugosita_finale(T_intera);
+
+[T ,Traversabilita] = AvgMap(T_intera,n_downsaple, clearence);
+% surf(T)
+h_max       = max(max(T));
+
+matriceAltezze      = altezze(size(T,1),size(T,2),T);
+pendenze_nuove=calcolaPendenze(T);
+hmax=calcolaHmaxlungopercorso(T_intera);
+
+[patterningresso_non_mediati_senza_zscore] = genera_pattern_non_mediati(matriceAltezze, Rugosita, pendenze_nuove, hmax)
+
+genera_pattern_finali
+
