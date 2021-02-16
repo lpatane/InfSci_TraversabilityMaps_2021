@@ -1,0 +1,56 @@
+close all
+clc
+clear all
+
+load ('C:\Users\Salvo\Desktop\17112019\finale con classificatore\AutoEncoder\uscite_autoencoder.mat');
+load ('C:\Users\Salvo\Desktop\17112019\finale con classificatore\AutoEncoder\P_LEARNING_OUTPUT.mat');
+load ('C:\Users\Salvo\Desktop\17112019\finale con classificatore\AutoEncoder\input.mat');
+
+NET=newff(EncoderWeights', P_LEARNING_OUTPUT', 21);
+clc
+i
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  NET.trainParam.epochs=10000
+  NET.trainParam.max_fail=10000
+  NET.trainParam.goal = 1e-9;
+  NET.trainParam.lr=0.00001
+  clc
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+i
+NET_TRAIN=train(NET, EncoderWeights', P_LEARNING_OUTPUT');
+
+LSIMULATED=sim(NET_TRAIN, P_LEARNING_INPUT');
+TSIMULATED=sim(NET_TRAIN, P_TEST_INPUT');
+
+e_learning = LSIMULATED'-P_LEARNING_OUTPUT;
+e_medio_learning = mean(e_learning);
+
+figure(1);
+subplot(2, 2, 1)
+plot(e_learning);
+title('errore fase di learning');
+xlabel('campioni');
+ylabel('errore');
+legend('errore')
+
+subplot(2, 2, 2)
+plot([LSIMULATED' P_LEARNING_OUTPUT]);
+title('uscite desiderate vs uscite reali in learning');
+xlabel('campioni');
+ylabel('uscite');
+legend('uscita simulata','uscita desiderata')
+
+% e_medio_test = mean(e_learning);
+
+for j=1:size(TSIMULATED, 2)
+    if (TSIMULATED(j)>0.5)
+        TSIMULATED2(j)=1;
+    else
+        TSIMULATED2(j)=0;
+    end
+end
+
+TSIMULATED2=TSIMULATED2';
+
+totale_patteren_input_e_output=[totalepattern TSIMULATED2];
+

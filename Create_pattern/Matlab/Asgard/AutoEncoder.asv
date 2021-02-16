@@ -1,0 +1,60 @@
+close all;
+clc;
+clear all;
+
+load ('finale09112019.mat');
+
+DATI=MatriceDati;
+
+a=find(DATI(:, 1)==0);
+tutti_zeri=DATI(a, :);
+
+a=find(DATI(:, 1)==1);
+tutti_uni=DATI(a, :);
+tutti_uni=tutti_uni(1: 639, :);
+
+DATI=[tutti_uni; tutti_zeri];
+
+DATI=datasample(DATI, 1278);
+
+new1=zscore(DATI(:, 3)); %deltaH 1
+new2=zscore(DATI(:, 4)); %pendenza partenza
+new3=zscore(DATI(:, 5)); %pendenza arrivo
+new4=zscore(DATI(:, 6)); %Hmax partenza
+new5=zscore(DATI(:, 7)); %Hmax arrivo
+new6=zscore(DATI(:, 8)); %rug partenza
+new7=zscore(DATI(:, 9)); %rug arrivo
+
+new23=(new2+new3)/2; %pendenza 2
+for j=1:size(new4, 1) %Hmax 3
+    if new4(j)>=new5(j)
+        new45(j, 1)=new4(j);
+    else
+        new45(j, 1)=new5(j);
+    end
+end
+new67=(new6+new7)/2; %rug 4
+
+
+output=DATI(:, 1);
+new919=(DATI(:, 10:19));
+
+DATI=[new1 new23 new45 new67 output];
+
+num=size(DATI, 1);
+blocco=80*1/100*num;
+
+DATI_LERNING=DATI(1:blocco, :);
+DATI_TEST=DATI(blocco+1:end, :);
+
+P_LEARNING_INPUT=DATI_LERNING(:, 1:4);
+P_LEARNING_OUTPUT=DATI_LERNING(:, 5);
+P_TEST_INPUT=DATI_TEST(:, 1:4);
+P_TEST_OUTPUT=DATI_TEST(:, 5);
+
+
+autoenc = trainAutoencoder(P_LEARNING_INPUT',40,'MaxEpochs',4000, 'DecoderTransferFunction','purelin');
+
+DATI_LERNINGReconstructed = predict(autoenc,P_LEARNING_INPUT');
+
+mseError = mse(P_LEARNING_INPUT'-DATI_LERNINGReconstructed);
